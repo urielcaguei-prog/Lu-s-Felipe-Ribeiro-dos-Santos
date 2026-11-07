@@ -1,0 +1,2 @@
+# Netflix Floating Panel (independent, unofficial Android overlay)
+Installable Android application source. Launches a draggable red N bubble, panel, opacity and size controls, and links to installed Free Fire apps. Does not include any cheat, aimbot, ESP, modifications to third-party apps, VPN or ban evasion.
