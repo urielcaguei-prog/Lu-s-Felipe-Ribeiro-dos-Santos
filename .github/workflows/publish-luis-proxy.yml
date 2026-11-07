@@ -1,0 +1,33 @@
+name: Publish Netflix X Proxy APK direct download
+on:
+  push:
+    branches:
+      - build/luis-proxy-socks5-20261107
+    paths:
+      - .github/workflows/publish-luis-proxy.yml
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+jobs:
+  publish-apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download verified Android APK from successful native build
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p dist
+          gh run download 42369285015 --repo "${{ github.repository }}" --name Netflix-X-Proxy-SOCKS5-APK --dir dist
+          test -s dist/Netflix_X_Proxy_SOCKS5.apk
+          file dist/Netflix_X_Proxy_SOCKS5.apk
+          unzip -l dist/Netflix_X_Proxy_SOCKS5.apk | grep -q "lib/arm64-v8a/libhev-socks5-tunnel.so"
+          ls -lh dist/Netflix_X_Proxy_SOCKS5.apk
+      - name: Commit direct APK download to build branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f dist/Netflix_X_Proxy_SOCKS5.apk
+          git commit -m "Publish direct-install Android SOCKS5 APK"
+          git push origin HEAD:build/luis-proxy-socks5-20261107
