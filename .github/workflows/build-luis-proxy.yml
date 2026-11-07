@@ -31,6 +31,7 @@ jobs:
         run: |
           python3 ProxyFF/patch.py socks-vpn
           cp ProxyFF/GateActivity.java socks-vpn/app/src/main/java/hev/sockstun/GateActivity.java
+          cp ProxyFF/FloatingProxyService.java socks-vpn/app/src/main/java/hev/sockstun/FloatingProxyService.java
           cp ProxyFF/skull_neon.xml socks-vpn/app/src/main/res/drawable/skull_neon.xml
       - uses: gradle/actions/setup-gradle@v4
         with:

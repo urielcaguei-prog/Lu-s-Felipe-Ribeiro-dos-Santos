@@ -38,6 +38,16 @@ s=s.replace('''<activity android:name=".MainActivity" android:label="@string/app
         <activity android:name=".MainActivity" android:label="@string/app_name"
                 android:excludeFromRecents="false" android:exported="true">''')
 assert '.GateActivity' in s
+# Optional moveable overlay icon for the connection settings; no access to game memory.
+s=s.replace("</application>",'''  <service android:name=".FloatingProxyService"
+          android:exported="false"
+          android:foregroundServiceType="specialUse">
+          <property android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                    android:value="User-controlled floating proxy shortcut"/>
+      </service>
+    </application>''')
+s=s.replace("</manifest>",'''  <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+</manifest>''')
 manifest.write_text(s)
 src=app/"src/main/java/hev/sockstun/MainActivity.java"
 s=src.read_text()
@@ -50,6 +60,22 @@ s=s.replace(key,key+'''
         }''',1)
 # Always use the defined static red palette instead of Android Monet dynamic colors.
 s=s.replace("DynamicColors.applyToActivityIfAvailable(this);","// Custom black and crimson appearance.")
+# Real overlay launcher with an explicit Android overlay permission prompt.
+s=s.replace("setContentView(R.layout.main);", """setContentView(R.layout.main);
+        android.widget.Button overlayButton = (android.widget.Button)findViewById(R.id.overlay_button);
+        overlayButton.setOnClickListener(v -> {
+            if (!android.provider.Settings.canDrawOverlays(this)) {
+                Intent settingsIntent=new Intent(android.provider.Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                    android.net.Uri.parse("package:"+getPackageName()));
+                startActivity(settingsIntent);
+            } else {
+                Intent floatIntent=new Intent(this,FloatingProxyService.class);
+                if(android.os.Build.VERSION.SDK_INT>=26)startForegroundService(floatIntent);
+                else startService(floatIntent);
+                Toast.makeText(this,"Ícone flutuante ativado",Toast.LENGTH_SHORT).show();
+            }
+        });
+""",1)
 # Refuse to create a VPN without an endpoint, rather than displaying a false active status.
 s=s.replace('''boolean isEnable = prefs.getEnable();
 			prefs.setEnable(!isEnable);''','''boolean isEnable = prefs.getEnable();
@@ -124,5 +150,13 @@ header='''android:padding="16dp">
             android:textSize="12sp" android:textColor="#B9BDCA" android:padding="7dp" android:layout_marginBottom="12dp"/>'''
 assert needle in s
 s=s.replace(needle,header,1)
+s=s.replace('''<TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:text="Preencha''','''<Button android:id="@+id/overlay_button"
+            android:layout_width="match_parent" android:layout_height="52dp"
+            android:text="ATIVAR ÍCONE FLUTUANTE DE CAVEIRA"
+            android:layout_marginBottom="14dp"
+            android:textColor="#FFFFFF" android:backgroundTint="#E50914"/>
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:text="Preencha''',1)
 layout.write_text(s)
 print("Customization applied: main, key gate, icon, VPN config, strings, dark theme.")
