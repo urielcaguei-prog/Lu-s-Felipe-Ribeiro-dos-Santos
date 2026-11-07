@@ -122,12 +122,28 @@ sealed class BubbleForm:Form {
  }
  public void ResizeBubble(int size){Size=new(Math.Clamp(size,52,112),Math.Clamp(size,52,112));Invalidate();}
  protected override void OnPaint(PaintEventArgs e){
-  e.Graphics.SmoothingMode=SmoothingMode.AntiAlias;e.Graphics.Clear(Palette.Bg);
-  using var p=new Pen(Palette.Red,3);e.Graphics.DrawEllipse(p,2,2,Width-5,Height-5);
-  using var f=new Font("Arial",Math.Max(26,Width*.55f),FontStyle.Bold);
-  using var b=new SolidBrush(Palette.Red);
-  using var sf=new StringFormat{Alignment=StringAlignment.Center,LineAlignment=StringAlignment.Center};
-  e.Graphics.DrawString("N",f,b,new RectangleF(0,-2,Width,Height),sf);
+  var g=e.Graphics;g.SmoothingMode=SmoothingMode.AntiAlias;g.Clear(Palette.Bg);
+  using var outer=new Pen(Palette.Red,3);g.DrawEllipse(outer,2,2,Width-5,Height-5);
+  g.TranslateTransform(Width/2f,Height/2f);
+  float k=Math.Min(Width,Height)/78f;g.ScaleTransform(k,k);
+  using var red=new SolidBrush(Palette.Red);
+  using var bone=new SolidBrush(Color.FromArgb(237,242,246));
+  using var shade=new SolidBrush(Color.FromArgb(28,38,49));
+  using var ice=new SolidBrush(Color.FromArgb(36,213,249));
+  using var dark=new SolidBrush(Color.FromArgb(7,17,27));
+  using var white=new SolidBrush(Color.White);
+  // Stylized crown and skull for high-contrast rendering at small overlay sizes.
+  g.FillPolygon(red,new[]{new PointF(-26,-17),new PointF(-30,-34),new PointF(-11,-25),new PointF(0,-37),new PointF(11,-25),new PointF(30,-34),new PointF(26,-17)});
+  g.FillEllipse(bone,-30,-21,60,50);
+  g.FillPolygon(bone,new[]{new PointF(-20,8),new PointF(20,8),new PointF(18,31),new PointF(-18,31)});
+  g.FillEllipse(shade,-24,-7,24,22);g.FillEllipse(shade,0,-7,24,22);
+  g.FillEllipse(ice,-21,-5,18,16);g.FillEllipse(ice,3,-5,18,16);
+  g.FillEllipse(dark,-13,-2,8,11);g.FillEllipse(dark,8,-2,8,11);
+  g.FillEllipse(white,-19,-3,4,5);g.FillEllipse(white,5,-3,4,5);
+  g.FillPolygon(dark,new[]{new PointF(0,7),new PointF(-6,19),new PointF(6,19)});
+  g.FillRectangle(shade,-17,24,34,6);
+  for(int x=-14;x<16;x+=8)g.FillRectangle(bone,x,24,6,6);
+  g.ResetTransform();
  }
 }
 sealed class FloatingForm:Form {
