@@ -15,6 +15,15 @@ jobs:
       - name: Publish native Windows app as standalone EXE
         shell: pwsh
         run: dotnet publish NetflixDesktop/NetflixPainelPC.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:DebugSymbols=false -p:DebugType=none -o out
+      - name: Smoke test launch of desktop GUI
+        shell: pwsh
+        run: |
+          $p = Start-Process -FilePath (Join-Path $PWD "out/NetflixPainelPC.exe") -PassThru
+          Start-Sleep -Seconds 5
+          $p.Refresh()
+          if ($p.HasExited) { throw "Desktop application exited unexpectedly. Exit code: $($p.ExitCode)" }
+          Write-Output "Smoke test passed: app launched and remains active."
+          Stop-Process -Id $p.Id -Force
       - uses: actions/upload-artifact@v4
         with:
           name: Netflix-Painel-PC-EXE
