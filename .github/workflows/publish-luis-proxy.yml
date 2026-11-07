@@ -19,15 +19,16 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           mkdir -p dist
-          gh run download 42369285015 --repo "${{ github.repository }}" --name Netflix-X-Proxy-SOCKS5-APK --dir dist
-          test -s dist/Netflix_X_Proxy_SOCKS5.apk
-          file dist/Netflix_X_Proxy_SOCKS5.apk
-          unzip -l dist/Netflix_X_Proxy_SOCKS5.apk | grep -q "lib/arm64-v8a/libhev-socks5-tunnel.so"
-          ls -lh dist/Netflix_X_Proxy_SOCKS5.apk
+          gh run download 42369862379 --repo "${{ github.repository }}" --name Netflix-X-Proxy-SOCKS5-APK --dir dist
+          mv dist/Netflix_X_Proxy_SOCKS5.apk dist/Netflix_X_Proxy_SOCKS5_Flutuante.apk
+          test -s dist/Netflix_X_Proxy_SOCKS5_Flutuante.apk
+          file dist/Netflix_X_Proxy_SOCKS5_Flutuante.apk
+          unzip -l dist/Netflix_X_Proxy_SOCKS5_Flutuante.apk | grep -q "lib/arm64-v8a/libhev-socks5-tunnel.so"
+          ls -lh dist/Netflix_X_Proxy_SOCKS5_Flutuante.apk
       - name: Commit direct APK download to build branch
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -f dist/Netflix_X_Proxy_SOCKS5.apk
+          git add -f dist/Netflix_X_Proxy_SOCKS5_Flutuante.apk
           git commit -m "Publish direct-install Android SOCKS5 APK"
           git push origin HEAD:build/luis-proxy-socks5-20261107
