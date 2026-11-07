@@ -2,7 +2,7 @@ name: Build Netflix X Proxy Android (Real SOCKS5 VPN)
 on:
   push:
     branches:
-      - build/luis-proxy-socks5-20261107
+      - build/netflix-ff-proxy-app-20261107
   workflow_dispatch:
 jobs:
   android:
@@ -30,8 +30,9 @@ jobs:
       - name: Apply branded UI, access key and startup checks
         run: |
           python3 ProxyFF/patch.py socks-vpn
+          python3 ProxyFF/patch_clean.py socks-vpn
           cp ProxyFF/GateActivity.java socks-vpn/app/src/main/java/hev/sockstun/GateActivity.java
-          cp ProxyFF/FloatingProxyService.java socks-vpn/app/src/main/java/hev/sockstun/FloatingProxyService.java
+          cp ProxyFF/ProxyProbe.java socks-vpn/app/src/main/java/hev/sockstun/ProxyProbe.java
           cp ProxyFF/skull_neon.xml socks-vpn/app/src/main/res/drawable/skull_neon.xml
       - uses: gradle/actions/setup-gradle@v4
         with:
