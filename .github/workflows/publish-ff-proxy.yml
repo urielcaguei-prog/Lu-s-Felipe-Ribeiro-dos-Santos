@@ -1,0 +1,33 @@
+name: Publish Netflix FF Proxy no-overlay APK
+on:
+  push:
+    branches:
+      - build/netflix-ff-proxy-app-20261107
+    paths:
+      - .github/workflows/publish-ff-proxy.yml
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch verified Android SOCKS5 build artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p /tmp/netflix-clean dist
+          gh run download 42370731715 --repo "${{ github.repository }}" --name Netflix-X-Proxy-SOCKS5-APK --dir /tmp/netflix-clean
+          cp /tmp/netflix-clean/Netflix_X_Proxy_SOCKS5.apk dist/Netflix_X_Proxy_FF_Sem_Flutuante.apk
+          test -s dist/Netflix_X_Proxy_FF_Sem_Flutuante.apk
+          unzip -l dist/Netflix_X_Proxy_FF_Sem_Flutuante.apk | grep -q "lib/arm64-v8a/libhev-socks5-tunnel.so"
+          ls -lh dist/Netflix_X_Proxy_FF_Sem_Flutuante.apk
+      - name: Commit installable APK to this branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f dist/Netflix_X_Proxy_FF_Sem_Flutuante.apk
+          git commit -m "Publish final no-floating FF SOCKS5 APK"
+          git push origin HEAD:build/netflix-ff-proxy-app-20261107
