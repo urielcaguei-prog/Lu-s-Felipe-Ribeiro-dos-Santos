@@ -51,8 +51,11 @@ public class OverlayService extends Service {
  }
  private void buildBubble(){
   int size=prefs.getInt("bubble",58);
-  TextView b=Ui.text(this,"N",36,true,Ui.RED);b.setGravity(Gravity.CENTER);b.setTypeface(Typeface.DEFAULT,Typeface.BOLD);
-  b.setBackground(Ui.box(this,Ui.BG,Ui.RED,26));b.setElevation(Ui.dp(this,10));
+  android.widget.ImageView b=new android.widget.ImageView(this);
+  b.setImageResource(R.drawable.skull_neon);
+  b.setScaleType(android.widget.ImageView.ScaleType.FIT_CENTER);
+  b.setPadding(Ui.dp(this,3),Ui.dp(this,3),Ui.dp(this,3),Ui.dp(this,3));
+  b.setBackground(Ui.box(this,Ui.BG,Ui.RED,size/2));b.setElevation(Ui.dp(this,10));
   params=placement(Ui.dp(this,size),Ui.dp(this,size));attach(b);b.setOnTouchListener(drag());
  }
  private TextView note(String s,int sz,int color){return Ui.text(this,s,sz,false,color);}
@@ -62,7 +65,9 @@ public class OverlayService extends Service {
  }
  private void header(LinearLayout root){
   LinearLayout bar=Ui.row(this);root.addView(bar,Ui.lp(this,-1,46,0));
-  TextView icon=Ui.text(this,"N",30,true,Ui.RED);bar.addView(icon,new LinearLayout.LayoutParams(Ui.dp(this,40),-1));
+  android.widget.ImageView icon=new android.widget.ImageView(this);icon.setImageResource(R.drawable.skull_neon);
+  icon.setScaleType(android.widget.ImageView.ScaleType.FIT_CENTER);
+  bar.addView(icon,new LinearLayout.LayoutParams(Ui.dp(this,42),-1));
   TextView title=Ui.text(this,"NETFLIX  /  FLOAT PANEL",15,true,Ui.WHITE);
   bar.addView(title,new LinearLayout.LayoutParams(0,-1,1));
   Button mini=Ui.button(this,"—",false);bar.addView(mini,new LinearLayout.LayoutParams(Ui.dp(this,45),Ui.dp(this,38)));

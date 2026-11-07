@@ -25,7 +25,14 @@ public class MainActivity extends Activity {
  void button(String s,boolean primary,Runnable action){Button b=Ui.button(this,s,primary);root.addView(b,Ui.lp(this,-1,52,10));b.setOnClickListener(v->action.run());}
  void render(){
   ScrollView sc=new ScrollView(this);sc.setBackgroundColor(Ui.BG);root=Ui.column(this);Ui.pad(this,root,22,24);sc.addView(root);setContentView(sc);
-  root.addView(Ui.text(this,"N   NETFLIX",29,true,Ui.RED),Ui.lp(this,-1,47,0));
+  LinearLayout brand=Ui.row(this);
+  root.addView(brand,Ui.lp(this,-1,64,0));
+  android.widget.ImageView logo=new android.widget.ImageView(this);
+  logo.setImageResource(R.drawable.skull_neon);
+  logo.setScaleType(android.widget.ImageView.ScaleType.FIT_CENTER);
+  brand.addView(logo,new LinearLayout.LayoutParams(Ui.dp(this,58),Ui.dp(this,58)));
+  TextView label=Ui.text(this,"  NETFLIX",27,true,Ui.RED);
+  brand.addView(label,new LinearLayout.LayoutParams(-1,Ui.dp(this,57)));
   root.addView(Ui.text(this,"FLOAT PANEL  /  V2.0",11,true,Ui.MUTED),Ui.lp(this,-1,25,0));
   root.addView(Ui.text(this,"Seu painel.\nSeu estilo.",30,true,Ui.WHITE),Ui.lp(this,-1,85,17));
   info("Painel nativo Android com ícone flutuante, prévia animada, ajustes salvos e diagnóstico de conexões.");
