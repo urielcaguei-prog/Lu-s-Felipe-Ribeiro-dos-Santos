@@ -12,6 +12,11 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
+      - name: Generate premium skull app icon
+        shell: pwsh
+        run: |
+          python -m pip install --disable-pip-version-check Pillow
+          python NetflixDesktop/generate_icon.py
       - name: Publish native Windows app as standalone EXE
         shell: pwsh
         run: dotnet publish NetflixDesktop/NetflixPainelPC.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:DebugSymbols=false -p:DebugType=none -o out
