@@ -18,9 +18,9 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          mkdir -p dist
-          gh run download 42369862379 --repo "${{ github.repository }}" --name Netflix-X-Proxy-SOCKS5-APK --dir dist
-          mv dist/Netflix_X_Proxy_SOCKS5.apk dist/Netflix_X_Proxy_SOCKS5_Flutuante.apk
+          mkdir -p dist /tmp/proxy-new
+          gh run download 42369862379 --repo "${{ github.repository }}" --name Netflix-X-Proxy-SOCKS5-APK --dir /tmp/proxy-new
+          mv /tmp/proxy-new/Netflix_X_Proxy_SOCKS5.apk dist/Netflix_X_Proxy_SOCKS5_Flutuante.apk
           test -s dist/Netflix_X_Proxy_SOCKS5_Flutuante.apk
           file dist/Netflix_X_Proxy_SOCKS5_Flutuante.apk
           unzip -l dist/Netflix_X_Proxy_SOCKS5_Flutuante.apk | grep -q "lib/arm64-v8a/libhev-socks5-tunnel.so"
