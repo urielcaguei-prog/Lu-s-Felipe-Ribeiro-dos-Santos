@@ -8,8 +8,8 @@ jobs:
   android:
     runs-on: ubuntu-latest
     env:
-      ANDROID_HOME: /usr/local/lib/android/sdk
-      ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
+      ANDROID_HOME: /home/runner/android-sdk
+      ANDROID_SDK_ROOT: /home/runner/android-sdk
     defaults:
       run:
         working-directory: NetflixFloatingPanel
@@ -19,10 +19,14 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
-      - name: Install Android SDK components
+      - name: Install official Android command-line tools
         run: |
-          yes | /usr/local/lib/android/sdk/cmdline-tools/16.0/bin/sdkmanager --licenses >/dev/null || true
-          /usr/local/lib/android/sdk/cmdline-tools/16.0/bin/sdkmanager --install 'platforms;android-35' 'build-tools;35.0.0'
+          mkdir -p "$ANDROID_HOME/cmdline-tools"
+          curl -fL --retry 3 "https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip" -o /tmp/android-tools.zip
+          unzip -q /tmp/android-tools.zip -d "$ANDROID_HOME/cmdline-tools"
+          mv "$ANDROID_HOME/cmdline-tools/cmdline-tools" "$ANDROID_HOME/cmdline-tools/latest"
+          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses >/dev/null || true
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install 'platforms;android-35' 'build-tools;35.0.0' 'platform-tools'
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.9'
