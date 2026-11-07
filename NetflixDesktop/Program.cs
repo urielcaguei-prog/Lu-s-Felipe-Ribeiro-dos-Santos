@@ -113,7 +113,7 @@ sealed class BubbleForm:Form {
  public BubbleForm(AppOptions s,Action onClick){open=onClick;FormBorderStyle=FormBorderStyle.None;ShowInTaskbar=false;TopMost=true;
   StartPosition=FormStartPosition.Manual;Location=new Point(30,145);BackColor=Palette.Bg;Size=new(s.BubbleSize,s.BubbleSize);DoubleBuffered=true;
   MouseDown+=(_,e)=>{pressed=Cursor.Position;startLoc=Location;dragged=false;};
-  MouseMove+=(_,e)=>{if(e.Button!=MouseButtons.Left)return;var delta=Cursor.Position-pressed;
+  MouseMove+=(_,e)=>{if(e.Button!=MouseButtons.Left)return;var delta=new Size(Cursor.Position.X-pressed.X,Cursor.Position.Y-pressed.Y);
    if(Math.Abs(delta.X)+Math.Abs(delta.Y)>6)dragged=true;
    if(dragged)Location=new(startLoc.X+delta.X,startLoc.Y+delta.Y);
   };
@@ -143,7 +143,7 @@ sealed class FloatingForm:Form {
   heading.Controls.Add(Palette.Text("NETFLIX   /   FLOAT",57,6,210,36,12,true));
   heading.Controls.Add(Palette.Btn("—",300,8,52,35,()=>minimize()));
   heading.MouseDown+=(_,e)=>{down=Cursor.Position;old=Location;dragging=true;};
-  heading.MouseMove+=(_,e)=>{if(dragging&&e.Button==MouseButtons.Left){var d=Cursor.Position-down;Location=new(old.X+d.X,old.Y+d.Y);}};
+  heading.MouseMove+=(_,e)=>{if(dragging&&e.Button==MouseButtons.Left){var d=new Size(Cursor.Position.X-down.X,Cursor.Position.Y-down.Y);Location=new(old.X+d.X,old.Y+d.Y);}};
   heading.MouseUp+=(_,_)=>dragging=false;
   body=new Panel{Dock=DockStyle.Fill,AutoScroll=true,BackColor=Palette.Bg};Controls.Add(body);body.BringToFront();
   SetPage(0);
