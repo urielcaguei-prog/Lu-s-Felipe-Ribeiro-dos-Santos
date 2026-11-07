@@ -56,6 +56,23 @@ extra=r"""
             }).start();
         });
 """
+# Visual-only feature switches: persist UI preference; never claim game integration.
+extra += r"""
+        final android.content.SharedPreferences demoPrefs=getSharedPreferences("nx_visual",MODE_PRIVATE);
+        final android.widget.Switch espVisual=findViewById(R.id.nx_esp_visual);
+        final android.widget.Switch aimVisual=findViewById(R.id.nx_aim_visual);
+        final android.widget.TextView demoStatus=findViewById(R.id.nx_visual_status);
+        espVisual.setChecked(demoPrefs.getBoolean("esp",false));
+        aimVisual.setChecked(demoPrefs.getBoolean("aim",false));
+        espVisual.setOnCheckedChangeListener((button,checked)->{
+            demoPrefs.edit().putBoolean("esp",checked).apply();
+            demoStatus.setText("ESP: "+(checked?"visual ligado":"desligado")+" • sem efeito no jogo");
+        });
+        aimVisual.setOnCheckedChangeListener((button,checked)->{
+            demoPrefs.edit().putBoolean("aim",checked).apply();
+            demoStatus.setText("AIMBOT: "+(checked?"visual ligado":"desligado")+" • sem efeito no jogo");
+        });
+"""
 anchor="setContentView(R.layout.main);"
 assert anchor in s
 s=s.replace(anchor,anchor+extra,1)
@@ -106,10 +123,47 @@ card='''<LinearLayout
                 android:textColor="#FFFFFF" android:backgroundTint="#E50914"/>
         </LinearLayout>
         '''
-s=s.replace(where,card+where,1)
+feature_card='''<LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="vertical" android:padding="18dp" android:layout_marginBottom="16dp"
+            android:background="#181818">
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:text="🫵  NETFLIX X • CENTRAL FF" android:textColor="#E50914"
+                android:textSize="19sp" android:textStyle="bold"/>
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:text="SEUS CONTROLES" android:textColor="#FFFFFF"
+                android:textSize="12sp" android:layout_marginTop="10dp" android:layout_marginBottom="12dp"/>
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:text="ESP • VISUAL" android:textColor="#FFFFFF" android:textSize="17sp" android:textStyle="bold"/>
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:text="Interface de ativação. Não rastreia inimigos."
+                android:textColor="#B3B3B3" android:textSize="12sp"/>
+            <Switch android:id="@+id/nx_esp_visual" android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:text="Ativar ESP"
+                android:textColor="#FFFFFF" android:layout_marginTop="8dp"
+                android:thumbTint="#E50914" android:trackTint="#5A2025"/>
+            <View android:layout_width="match_parent" android:layout_height="1dp"
+                android:layout_marginTop="16dp" android:layout_marginBottom="16dp"
+                android:background="#383838"/>
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:text="AIMBOT • VISUAL" android:textColor="#FFFFFF" android:textSize="17sp" android:textStyle="bold"/>
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:text="Interface de ativação. Não altera a mira."
+                android:textColor="#B3B3B3" android:textSize="12sp"/>
+            <Switch android:id="@+id/nx_aim_visual" android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:text="Ativar Aimbot"
+                android:textColor="#FFFFFF" android:layout_marginTop="8dp"
+                android:thumbTint="#E50914" android:trackTint="#5A2025"/>
+            <TextView android:id="@+id/nx_visual_status"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:text="Os controles ESP e Aimbot são apenas visuais."
+                android:textColor="#B3B3B3" android:textSize="12sp"
+                android:layout_marginTop="16dp"/>
+        </LinearLayout>
+        '''
+s=s.replace(where,feature_card+card+where,1)
 layout.write_text(s)
 
 strings=main/"res/values/strings.xml"
 s=strings.read_text().replace(">Netflix X Proxy</string>",">Netflix X Proxy FF</string>")
 strings.write_text(s)
-print("Netflix X Proxy FF: floating overlay REMOVED, FF-only preset and TCP SOCKS5 probe added.")
+print("Netflix X Proxy FF: Netflix-style visual ESP/AIMBOT switches, FF routing, SOCKS5 probe.")
