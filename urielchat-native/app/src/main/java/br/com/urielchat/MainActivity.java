@@ -37,7 +37,7 @@ public class MainActivity extends Activity {
   scroll.addView(content); setContentView(scroll);
   text("Uriel Chat",25,green);
   text("Aviso do administrador: digite sua chave de licença para liberar os controles. Não digite a senha do Google.",15,white);
-  text("Teste experimental: análise visual de uma captura única, sem rastreamento constante. Não distingue aliados ou inimigos.",13,white);
+  text("O botão ◎ usa duas capturas e compara posições da cabeça antes de tentar um gesto e um toque de disparo. Não distingue aliados ou inimigos.",13,white);
   license = new EditText(this);
   license.setTextColor(white); license.setHintTextColor(0xffbbbbbb);
   license.setSingleLine(true); license.setHint("Licença KeyAuth");
@@ -48,7 +48,7 @@ public class MainActivity extends Activity {
   status=text("Sem licença verificada",14,white);
   button("Abrir configurações de acessibilidade").setOnClickListener(v->startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)));
   button("Autorizar sobreposição").setOnClickListener(v->startActivity(new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:"+getPackageName()))));
-  text("Limite máximo do gesto experimental, em pixels",14,white);
+  text("Limite máximo de correção (pixels)",14,white);
   SeekBar bar=new SeekBar(this); bar.setMax(220);
   bar.setProgress(getPreferences().getInt("delta",55));
   bar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){
@@ -57,15 +57,38 @@ public class MainActivity extends Activity {
     public void onStopTrackingTouch(SeekBar b){}
   });
   content.addView(bar);
+  text("Intensidade da correção (porcentagem)",14,white);
+  SeekBar gain=new SeekBar(this);gain.setMax(80);
+  gain.setProgress(getPreferences().getInt("strength",30));
+  gain.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){
+    public void onProgressChanged(SeekBar b,int p,boolean user){getPreferences().edit().putInt("strength",p).apply();}
+    public void onStartTrackingTouch(SeekBar b){}
+    public void onStopTrackingTouch(SeekBar b){}
+  });
+  content.addView(gain);
+  text("Coordenada horizontal do botão de disparo: 0% esquerda, 100% direita",14,white);
+  SeekBar fireX=new SeekBar(this);fireX.setMax(99);fireX.setProgress(getPreferences().getInt("fireX",86));
+  fireX.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){
+    public void onProgressChanged(SeekBar b,int p,boolean u){getPreferences().edit().putInt("fireX",Math.max(1,p)).apply();}
+    public void onStartTrackingTouch(SeekBar b){}
+    public void onStopTrackingTouch(SeekBar b){}
+  });content.addView(fireX);
+  text("Coordenada vertical do botão de disparo: 0% topo, 100% embaixo",14,white);
+  SeekBar fireY=new SeekBar(this);fireY.setMax(99);fireY.setProgress(getPreferences().getInt("fireY",59));
+  fireY.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){
+    public void onProgressChanged(SeekBar b,int p,boolean u){getPreferences().edit().putInt("fireY",Math.max(1,p)).apply();}
+    public void onStartTrackingTouch(SeekBar b){}
+    public void onStopTrackingTouch(SeekBar b){}
+  });content.addView(fireY);
   button("Iniciar botão flutuante").setOnClickListener(v->{
     if(!licensed){status.setText("Valide a licença primeiro.");return;}
     if(GestureService.instance==null){status.setText("Habilite a acessibilidade do Uriel Chat.");return;}
     if(!Settings.canDrawOverlays(this)){status.setText("Autorize sobreposição de tela.");return;}
     startForegroundService(new Intent(this,OverlayService.class));
-    status.setText("Botão experimental iniciado. Toque em ◎ para analisar uma captura e tentar uma correção.");
+    status.setText("Botão experimental iniciado. ◎ analisa duas capturas e tenta um gesto seguido de um toque.");
   });
   button("Parar botão flutuante").setOnClickListener(v->{stopService(new Intent(this,OverlayService.class)); status.setText("Controle parado.");});
-  text("Detecção facial via ML Kit disponível para teste. Não há garantia de reconhecer personagens do Free Fire. ESP e Chams NÃO estão implementados.",13,0xffffcc88);
+  text("A correção só é tentada após duas capturas com a cabeça visualmente parada. A análise pode falhar, a direção do gesto pode não corresponder à câmera e o jogo pode ignorar o toque. ESP/Chams reais NÃO estão implementados.",13,0xffffcc88);
  }
  private android.content.SharedPreferences getPreferences(){return getSharedPreferences("settings",0);}
  private TextView text(String s,int size,int color){
