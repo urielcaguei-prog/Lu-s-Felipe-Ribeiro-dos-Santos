@@ -1,0 +1,14 @@
+plugins { id 'com.android.application' }
+android {
+ namespace 'br.com.urielchat'
+ compileSdk 35
+ defaultConfig {
+   applicationId 'br.com.urielchat'
+   minSdk 30
+   targetSdk 32
+   versionCode 3
+   versionName '0.3'
+ }
+ buildTypes { release { minifyEnabled false } }
+ compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
+}
