@@ -37,7 +37,7 @@ public class MainActivity extends Activity {
   scroll.addView(content); setContentView(scroll);
   text("Uriel Chat",25,green);
   text("Aviso do administrador: digite sua chave de licença para liberar os controles. Não digite a senha do Google.",15,white);
-  text("Aplicativo independente. Um gesto vertical manual não identifica cabeças e não é aimbot inteligente.",13,white);
+  text("Teste experimental: análise visual de uma captura única, sem rastreamento constante. Não distingue aliados ou inimigos.",13,white);
   license = new EditText(this);
   license.setTextColor(white); license.setHintTextColor(0xffbbbbbb);
   license.setSingleLine(true); license.setHint("Licença KeyAuth");
@@ -48,7 +48,7 @@ public class MainActivity extends Activity {
   status=text("Sem licença verificada",14,white);
   button("Abrir configurações de acessibilidade").setOnClickListener(v->startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)));
   button("Autorizar sobreposição").setOnClickListener(v->startActivity(new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:"+getPackageName()))));
-  text("Puxada para cima, em pixels (gesto de teste manual)",14,white);
+  text("Limite máximo do gesto experimental, em pixels",14,white);
   SeekBar bar=new SeekBar(this); bar.setMax(220);
   bar.setProgress(getPreferences().getInt("delta",55));
   bar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){
@@ -62,10 +62,10 @@ public class MainActivity extends Activity {
     if(GestureService.instance==null){status.setText("Habilite a acessibilidade do Uriel Chat.");return;}
     if(!Settings.canDrawOverlays(this)){status.setText("Autorize sobreposição de tela.");return;}
     startForegroundService(new Intent(this,OverlayService.class));
-    status.setText("Botão flutuante iniciado. Gesto único manual; não detecta inimigos.");
+    status.setText("Botão experimental iniciado. Toque em ◎ para analisar uma captura e tentar uma correção.");
   });
   button("Parar botão flutuante").setOnClickListener(v->{stopService(new Intent(this,OverlayService.class)); status.setText("Controle parado.");});
-  text("Esta versão implementa login e gesto via acessibilidade. ESP, Chams e detecção da cabeça NÃO estão implementados.",13,0xffffcc88);
+  text("Detecção facial via ML Kit disponível para teste. Não há garantia de reconhecer personagens do Free Fire. ESP e Chams NÃO estão implementados.",13,0xffffcc88);
  }
  private android.content.SharedPreferences getPreferences(){return getSharedPreferences("settings",0);}
  private TextView text(String s,int size,int color){
